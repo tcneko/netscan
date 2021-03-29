@@ -7,7 +7,7 @@ Scan multiple network periodically and display scan results in CLI
 This shell script only tested in ubuntu, but should be able to work in other environments.
 
 ```
-apt install -y nmap
+apt install -y nmap jq
 cd ${path_to_install}
 git clone https://github.com/tcneko/netscan.git
 cd netsacn
