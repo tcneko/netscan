@@ -31,6 +31,7 @@ load_cfg() {
   if [[ -r ${f_cfg} ]]; then
     mapfile -t l_net < <(jq -r ".l_net[]" ${f_cfg})
     rescan=$(jq -r ".rescan" ${f_cfg})
+    nmap_timing_template=$(jq -r ".nmap_timing_template" ${f_cfg})
   else
     exit 1
   fi
@@ -90,7 +91,7 @@ draw_history() {
 
 start_worker() {
   for net in ${l_net[@]}; do
-    bash ${f_worker} ${net} ${rescan} ${f_pipe} &
+    bash ${f_worker} ${net} ${rescan} ${nmap_timing_template} ${f_pipe} &
     l_child_pid=($! ${l_child_pid[@]})
   done
 }

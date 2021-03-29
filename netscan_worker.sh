@@ -10,14 +10,15 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 # variables
 net=$1
 rescan=$2
-f_pipe=$3
+nmap_time_profile=$3
+f_pipe=$4
 
 # function
 netscan() {
   ix=1
   while true; do
     start_time=$(date +%s)
-    output=$(nmap -T4 -n -sn ${net} | grep "Nmap done" | cut -d" " -f3,6 | tr -d '(' | sed -E "s#([0-9]*) ([0-9]*)#${net} ${ix} \2 \1#g")
+    output=$(nmap -T3 -n -sn ${net} | grep "Nmap done" | cut -d" " -f3,6 | tr -d '(' | sed -E "s#([0-9]*) ([0-9]*)#${net} ${ix} \2 \1#g")
     echo ${output} >${f_pipe}
     # kill -s USR1 $PPID
     end_time=$(date +%s)
