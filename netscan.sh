@@ -13,9 +13,6 @@ trap "safe_exit" 1 2 9 15
 d_cur="$(dirname ${BASH_SOURCE[0]})"
 f_worker="${d_cur}/netscan_worker.sh"
 f_cfg='netscan.json'
-# d_work=$(mktemp -d -p /dev/shm)
-# f_pipe=$(mkfifo ${d_work}/netscan_fifo_pipe)
-f_pipe="${d_cur}/netscan_fifo_pipe"
 l_child_pid=()
 
 declare -gA a_scan_output
@@ -23,8 +20,6 @@ declare -gA a_scan_output
 # function
 safe_exit() {
   kill ${l_child_pid[@]}
-  clear
-  exit
 }
 
 load_cfg() {
@@ -47,17 +42,6 @@ echo_warning() {
 
 echo_error() {
   echo -ne "\e[1;31m$@\e[0m"
-}
-
-save_scan_history() {
-  while read line; do
-    l_output=($line)
-    net=${l_output[0]}
-    index=${l_output[1]}
-    success=${l_output[2]}
-    total=${l_output[3]}
-    a_scan_output[${net}]="[${index}]${success}/${total} ${a_scan_output[$net]}"
-  done
 }
 
 draw_history() {
@@ -89,19 +73,28 @@ draw_history() {
   done
 }
 
+process_history() {
+  while read line; do
+    l_output=(${line})
+    net=${l_output[0]}
+    index=${l_output[1]}
+    success=${l_output[2]}
+    total=${l_output[3]}
+    a_scan_output[${net}]="[${index}]${success}/${total} ${a_scan_output[$net]}"
+    clear
+    draw_history | column -t -s'|'
+  done
+}
+
 start_worker() {
   for net in ${l_net[@]}; do
-    bash ${f_worker} ${net} ${rescan} ${nmap_timing_template} ${f_pipe} &
+    bash ${f_worker} ${net} ${rescan} ${nmap_timing_template} &>/dev/null &
     l_child_pid=($! ${l_child_pid[@]})
   done
 }
 
 start_watcher() {
-  while true; do
-    save_scan_history <${f_pipe}
-    clear
-    draw_history | column -t -s'|'
-  done
+  socat tcp-l:5663,fork,reuseaddr - | process_history
 }
 
 main() {

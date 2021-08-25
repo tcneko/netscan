@@ -1,18 +1,31 @@
-# Netscan
+### Netscan
+
+
 
 Scan multiple network periodically and display scan results in CLI
 
-## Install & Use
+
+
+#### Install & Use
+
+
 
 This shell script only tested in ubuntu, but should be able to work in other environments.
 
-```
-apt install -y nmap jq
+```bash
+# install require software
+apt install -y nmap jq socat
+
+# clone the code
 cd ${path_to_install}
 git clone https://github.com/tcneko/netscan.git
+
+# edit the configuration file
 cd netsacn
-mkfifo netscan_fifo_pipe
 cp netscan_example.json netscan.json
 vim netscan.json // add network you want to sacn
-bash netscan.sh
+
+# run
+sudo bash netscan.sh
 ```
+
