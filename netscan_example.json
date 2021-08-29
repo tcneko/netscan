@@ -1,4 +1,5 @@
 {
+  "ipc_port": 5663,
   "nmap_timing_template": 3,
   "rescan": 60,
   "l_net": [
