@@ -14,7 +14,7 @@ This shell script only tested in ubuntu, but should be able to work in other env
 
 ```bash
 # install require software
-apt install -y nmap jq socat
+apt install -y jq bc fping socat
 
 # clone the code
 cd ${path_to_install}
@@ -23,7 +23,7 @@ git clone https://github.com/tcneko/netscan.git
 # edit the configuration file
 cd netsacn
 cp netscan_example.json netscan.json
-vim netscan.json // add network you want to sacn
+vim netscan.json # add network you want to sacn
 
 # run
 sudo bash netscan.sh

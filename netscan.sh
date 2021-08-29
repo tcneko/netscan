@@ -32,18 +32,10 @@ load_cfg() {
     ipc_port=$(jq -r ".ipc_port" ${f_cfg})
     mapfile -t l_net < <(jq -r ".l_net[]" ${f_cfg})
     rescan=$(jq -r ".rescan" ${f_cfg})
-    nmap_timing_template=$(jq -r ".nmap_timing_template" ${f_cfg})
     export l_net
   else
     exit 1
   fi
-}
-
-start_worker() {
-  for net in ${l_net[@]}; do
-    bash ${f_worker} ${net} ${rescan} ${nmap_timing_template} ${ipc_port} &>/dev/null &
-    l_worker_pid=($! ${l_worker_pid[@]})
-  done
 }
 
 start_painter() {
@@ -51,10 +43,17 @@ start_painter() {
   painter_pid=$!
 }
 
+start_worker() {
+  for net in ${l_net[@]}; do
+    bash ${f_worker} ${net} ${rescan} ${ipc_port} &>/dev/null &
+    l_worker_pid=($! ${l_worker_pid[@]})
+  done
+}
+
 main() {
-  clear
   load_cfg
   start_painter
+  sleep 1
   start_worker
   wait
 }
